@@ -1,4 +1,6 @@
 import tkinter as tk
+import datetime as dt
+import requests
 
 root = tk.Tk()
 
@@ -12,8 +14,13 @@ canvas.grid(row=0)
 
 tiles = {}                   #Dictionary to store each tile in grid
 changeTiles = {}
-wordOfDay = "GREAT"
 dayTotalOccurence = {}           #Dictionary to map the ammount of occurences of a letter in the word of the day
+
+#Getting current word of day from wordle
+currentDate = dt.date.today()       #Current date which is needed in order to access ocrrect json
+url = f"https://www.nytimes.com/svc/wordle/v2/{currentDate:%Y-%m-%d}.json"      #link to the json file containing current word
+query = requests.get(url).json()       #Querying for word
+wordOfDay = query["solution"].upper()   #Current word of the day
 
 def mapWordOfDayOccurences():
     for elt in wordOfDay:            #Maps number of occurences of letters in word of the day in a dictionary
@@ -106,7 +113,7 @@ def pressedBack(e=""): #Default parameter for .bind()
 
 
 def input_letter(letter):    #Function takes either on screen keyboard press as argument or .bind() 
-    if letter != str:        #Checks if .bind() called the function
+    if type(letter) != str:        #Checks if .bind() called the function
         if not letter.char.isalpha():       #If character is not a letter ignore it
             return
     global colInRow
